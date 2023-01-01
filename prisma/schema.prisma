@@ -1,48 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
-  id                  Int      @id @default(autoincrement())
-  email               String   @unique
-  name                String?
-  teamId              String?
-  leaderboardRows     LeaderboardRow[]
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @default(now()) @updatedAt
-
-  Team Team? @relation(fields: [teamId], references: [id])
+  id             String    @id @default(uuid())
+  email          String    @unique
+  phone          String?   @unique
+  password       String
+  firstName      String?
+  lastName       String?
+  displayName    String?
+  profilePicture String?
+  content        Content[]
+  profile        Profile?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  deleted        Boolean   @default(false)
 }
 
-model Team {
-  id        String   @id @default(uuid())
-  name      String
-  language  Language[]
-  users     User[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+enum RelationshipType {
+  FRIEND
+  UNFRIEND
+  REQUESTED
+  BLOCKED
+  MUTED
 }
 
-model LeaderboardRow {
-  leaderboardId  Int
-  userId         Int
-  rating         Int?
-
-  User User @relation(fields: [userId], references: [id])
-
-  @@id([leaderboardId, userId])
+model UserRelationship {
+  id               String           @id @default(uuid())
+  ownerId          String
+  relationId       String
+  relationshipType RelationshipType
 }
 
-enum Language {
-  JAPANESE
-  ENGLISH
-  CHINESE
-  FRENCH
-  GERMAN
-  SPANISH
+enum ContentType {
+  THOUGHT
+  BLOG
+  ITEM
+}
+
+model Content {
+  id                  String               @id @default(uuid())
+  author              User                 @relation(fields: [authorId], references: [id])
+  authorId            String
+  contentInteractions ContentInteraction[]
+  body                String
+  contentType         ContentType
+  metadata            Json
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @default(now())
+  deleted             Boolean              @default(false)
+}
+
+enum ContentInteractionType {
+  LIKE
+  REPOST
+  COMMENT
+  SHARE
+}
+
+model ContentInteraction {
+  id              String                 @id @default(uuid())
+  content         Content                @relation(fields: [contentId], references: [id])
+  contentId       String
+  interactionType ContentInteractionType
+  metadata        Json
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @default(now())
+  deleted         Boolean                @default(false)
+}
+
+model Profile {
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String   @unique
+  headerImage     String?
+  pinnedContentId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+  deleted         Boolean  @default(false)
 }
