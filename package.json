@@ -34,7 +34,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
-    "@prisma/client": "^4.0.0",
+    "@prisma/client": "^4.8.0",
     "@tsconfig/node16": "^1.0.3",
     "c8": "^7.11.3",
     "husky": "^8.0.1",
