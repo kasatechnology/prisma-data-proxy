@@ -4,8 +4,6 @@ RUN apt-get update && apt-get install -y tini ca-certificates \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
 FROM base as builder
 
 COPY example/gcp/package.json .
@@ -18,10 +16,10 @@ RUN yarn prisma generate
 
 FROM base
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /node_modules ./node_modules
+COPY --from=builder /package.json ./package.json
 
-ENV PRISMA_SCHEMA_PATH=/app/node_modules/.prisma/client/schema.prisma
+ENV PRISMA_SCHEMA_PATH=/node_modules/.prisma/client/schema.prisma
 
 USER node
 
