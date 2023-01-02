@@ -1,8 +1,9 @@
 #! /usr/bin/env node
 import { PrismaClient } from "@prisma/client";
-import { getDMMF, getSchemaSync } from "@prisma/sdk";
-import express from "express";
-import { ApolloServer } from "apollo-server-express";
+import { getDMMF, getSchemaSync } from "@prisma/internals";
+import express, { Express } from "express";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
 import { afterMiddleware, makeServerConfig, beforeMiddleware } from "./";
 import { config } from "dotenv";
 config();
@@ -19,7 +20,7 @@ if (!apiKey) {
   throw Error("`DATA_PROXY_API_KEY` is not set.");
 }
 
-const app = express();
+const app: Express = express();
 app.use(beforeMiddleware({ apiKey }));
 app.use(afterMiddleware());
 
@@ -33,10 +34,8 @@ app.use(afterMiddleware());
 
   await server.start();
 
-  server.applyMiddleware({
-    app,
-    path: "/*",
-  });
+  app.use("/*", expressMiddleware(server));
+
   if (process.env.PORT) {
     const port = process.env.PORT;
     app.listen({ port }, () => {

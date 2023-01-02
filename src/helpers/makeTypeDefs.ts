@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express";
+import { gql } from "graphql-tag";
 import { DMMF } from "@prisma/client/runtime";
 
 export const makeTypeDefs = (dmmf: DMMF.Document) => {
