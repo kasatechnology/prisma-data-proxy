@@ -7,12 +7,13 @@ RUN apt-get update && apt-get install -y tini ca-certificates \
 FROM base as builder
 
 COPY package.json .
-COPY yarn.lock .
+COPY tsconfig.json .
+COPY src ./src
 COPY prisma/schema.prisma ./prisma/schema.prisma
 
 RUN npm install && npm run build
 
-RUN npm prisma generate
+RUN npm exec prisma generate
 
 FROM base
 
