@@ -24,5 +24,7 @@ ENV PRISMA_SCHEMA_PATH=/node_modules/.prisma/client/schema.prisma
 
 USER node
 
+EXPOSE 8080
+
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "./dist/server.js"]
