@@ -25,4 +25,4 @@ ENV PRISMA_SCHEMA_PATH=/node_modules/.prisma/client/schema.prisma
 USER node
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["npm", "pdp"]
+CMD ["node", "./dist/server.js"]
