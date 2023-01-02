@@ -2,8 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import { getDMMF, getSchemaSync } from "@prisma/internals";
 import express, { Express } from "express";
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServer } from "apollo-server-express";
 import { afterMiddleware, makeServerConfig, beforeMiddleware } from "./";
 import { config } from "dotenv";
 config();
@@ -34,7 +33,10 @@ app.use(afterMiddleware());
 
   await server.start();
 
-  app.use("*", expressMiddleware(server));
+  server.applyMiddleware({
+    app,
+    path: "/*",
+  });
 
   if (process.env.PORT) {
     const port = process.env.PORT;
