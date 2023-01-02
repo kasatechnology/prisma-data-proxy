@@ -34,7 +34,7 @@ app.use(afterMiddleware());
 
   await server.start();
 
-  app.use("/*", expressMiddleware(server));
+  app.use("*", expressMiddleware(server));
 
   if (process.env.PORT) {
     const port = process.env.PORT;
