@@ -10,7 +10,7 @@ COPY package.json .
 COPY yarn.lock .
 COPY prisma/schema.prisma ./prisma/schema.prisma
 
-RUN npm install
+RUN npm install && npm run build
 
 RUN npm prisma generate
 
@@ -18,6 +18,7 @@ FROM base
 
 COPY --from=builder /node_modules ./node_modules
 COPY --from=builder /package.json ./package.json
+COPY --from=builder /dist ./dist
 
 ENV PRISMA_SCHEMA_PATH=/node_modules/.prisma/client/schema.prisma
 
